@@ -1,13 +1,13 @@
 [app]
 
 # (str) Title of your application
-title = My
+title = Myssss
 
 # (str) Package name
-package.name = mysho
+package.name = myttt
 
 # (str) Package domain (needed for android/ios packaging)
-package.domain = org.t
+package.domain = org.d
 
 # (str) Source code where the main.py live
 source.dir = .
@@ -27,7 +27,7 @@ source.include_exts = py,png,jpg,kv,obj,mtl
 #source.exclude_patterns = license,images/*/*.jpg
 
 # (str) Application versioning (method 1)
-version = 4.45
+version = 6.45
 
 # (str) Application versioning (method 2)
 # version.regex = __version__ = ['"](.*)['"]
