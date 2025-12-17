@@ -30,6 +30,10 @@ ScreenManager:
     CreatePostScreen:
         id: create_screen
         name: 'create_post'
+    
+    PostDetailScreen:
+        id: post_detail_screen
+        name: 'post_detail'
 
 <LoginScreen>:
     BoxLayout:
@@ -92,8 +96,10 @@ ScreenManager:
     padding: 10
     spacing: 10
     size_hint_y: None
-    height: self.minimum_height
+    height: 200
     elevation: 2
+    md_bg_color: 0.95, 0.95, 0.95, 1
+    radius: [10,]
     
     BoxLayout:
         size_hint_y: None
@@ -105,6 +111,7 @@ ScreenManager:
             font_style: 'Subtitle1'
             theme_text_color: 'Primary'
             size_hint_x: 0.7
+            bold: True
         
         MDLabel:
             text: root.formatted_date
@@ -119,12 +126,17 @@ ScreenManager:
         size_hint_y: None
         height: self.texture_size[1]
         theme_text_color: 'Primary'
+        bold: True
     
     MDLabel:
         text: root.content
         size_hint_y: None
-        height: self.texture_size[1]
+        height: 60
         theme_text_color: 'Secondary'
+        text_size: self.width - 20, None
+        valign: 'top'
+        shorten: True
+        shorten_from: 'right'
     
     BoxLayout:
         size_hint_y: None
@@ -148,7 +160,7 @@ ScreenManager:
         MDIconButton:
             icon: 'comment'
             theme_text_color: 'Hint'
-            on_release: root.toggle_comments()
+            on_release: root.open_post_detail()
         
         MDLabel:
             text: '0'
@@ -156,30 +168,16 @@ ScreenManager:
             font_style: 'Caption'
             theme_text_color: 'Hint'
             size_hint_x: 0.2
-    
-    BoxLayout:
-        id: comments_box
-        orientation: 'vertical'
-        size_hint_y: None
-        height: 0
-        spacing: 5
-    
-    BoxLayout:
-        size_hint_y: None
-        height: 50
         
-        MDTextField:
-            id: comment_input
-            hint_text: 'Ваш комментарий'
-            size_hint_x: 0.7
-            mode: 'fill'
-            height: 40
+        Widget:
+            size_hint_x: 0.4
         
-        MDRaisedButton:
-            text: 'Отправить'
-            on_release: root.add_comment()
-            size_hint_x: 0.3
-            height: 40
+        MDIconButton:
+            icon: 'arrow-right'
+            theme_text_color: 'Hint'
+            on_release: root.open_post_detail()
+            size_hint_x: None
+            width: 40
 
 <MainScreen>:
     BoxLayout:
@@ -234,6 +232,113 @@ ScreenManager:
                     size_hint: None, None
                     size: 200, 50
                     pos_hint: {'center_x': 0.5}
+
+<PostDetailScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        
+        MDTopAppBar:
+            id: detail_topbar
+            title: "Детали поста"
+            elevation: 10
+            left_action_items: [['arrow-left', lambda x: app.show_main_screen()]]
+        
+        ScrollView:
+            BoxLayout:
+                orientation: 'vertical'
+                padding: 20
+                spacing: 20
+                size_hint_y: None
+                height: self.minimum_height
+                
+                BoxLayout:
+                    size_hint_y: None
+                    height: 40
+                    
+                    MDLabel:
+                        id: detail_author
+                        text: ""
+                        font_style: 'Subtitle1'
+                        bold: True
+                        size_hint_x: 0.7
+                    
+                    MDLabel:
+                        id: detail_date
+                        text: ""
+                        font_style: 'Caption'
+                        theme_text_color: 'Hint'
+                        halign: 'right'
+                        size_hint_x: 0.3
+                
+                MDLabel:
+                    id: detail_title
+                    text: ""
+                    font_style: 'H4'
+                    theme_text_color: 'Primary'
+                    size_hint_y: None
+                    height: self.texture_size[1]
+                
+                MDLabel:
+                    id: detail_content
+                    text: ""
+                    font_style: 'Body1'
+                    theme_text_color: 'Secondary'
+                    size_hint_y: None
+                    height: self.texture_size[1]
+                    text_size: self.width, None
+                
+                BoxLayout:
+                    size_hint_y: None
+                    height: 40
+                    spacing: 20
+                    
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        size_hint_x: 0.3
+                        spacing: 5
+                        
+                        MDIconButton:
+                            id: detail_like_button
+                            icon: 'heart-outline'
+                            theme_text_color: 'Custom'
+                            text_color: 0.5, 0.5, 0.5, 1
+                            on_release: root.toggle_like()
+                        
+                        MDLabel:
+                            id: detail_likes_count
+                            text: '0'
+                            font_style: 'Caption'
+                            theme_text_color: 'Hint'
+                
+                MDLabel:
+                    text: "Комментарии:"
+                    font_style: 'H6'
+                    theme_text_color: 'Primary'
+                    size_hint_y: None
+                    height: 40
+                
+                BoxLayout:
+                    id: detail_comments_list
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    height: self.minimum_height
+                    spacing: 10
+                
+                BoxLayout:
+                    size_hint_y: None
+                    height: 60
+                    spacing: 10
+                    
+                    MDTextField:
+                        id: detail_comment_input
+                        hint_text: 'Добавить комментарий...'
+                        mode: 'fill'
+                        size_hint_x: 0.7
+                    
+                    MDRaisedButton:
+                        text: 'Отправить'
+                        on_release: root.add_comment()
+                        size_hint_x: 0.3
 '''
 
 
@@ -245,12 +350,10 @@ class PostCard(MDCard):
     created_at = StringProperty('')
     comments_list = ListProperty([])
     post_id = NumericProperty(0)
-    user_liked = BooleanProperty(False)  # Добавляем это свойство
+    user_liked = BooleanProperty(False)
     formatted_date = StringProperty('')
-    comments_visible = BooleanProperty(False)
     
     def __init__(self, **kwargs):
-        # Удаляем user_liked из kwargs перед передачей в суперкласс
         user_liked = kwargs.pop('user_liked', False)
         super().__init__(**kwargs)
         self.user_liked = user_liked
@@ -296,47 +399,16 @@ class PostCard(MDCard):
         else:
             like_button.icon = 'heart-outline'
             like_button.text_color = (0.5, 0.5, 0.5, 1)
-        
-        # Обновляем комментарии
-        self.update_comments()
-    
-    def update_comments(self):
-        comments_box = self.ids.comments_box
-        comments_box.clear_widgets()
-        
-        for comment in self.comments_list:
-            if isinstance(comment, dict):
-                comment_text = f"{comment.get('author_name', 'Аноним')}: {comment.get('text', '')}"
-                label = MDLabel(
-                    text=comment_text,
-                    size_hint_y=None,
-                    height=30,
-                    font_style='Caption',
-                    theme_text_color='Secondary'
-                )
-                comments_box.add_widget(label)
-        
-        if self.comments_visible:
-            comments_box.height = len(self.comments_list) * 35
-        else:
-            comments_box.height = 0
-    
-    def toggle_comments(self):
-        self.comments_visible = not self.comments_visible
-        self.update_comments()
-    
-    def add_comment(self):
-        text = self.ids.comment_input.text.strip()
-        if text:
-            app = MDApp.get_running_app()
-            if app and app.current_user:
-                app.add_comment(self.post_id, text)
-                self.ids.comment_input.text = ''
     
     def like_post(self):
         app = MDApp.get_running_app()
         if app and app.current_user:
             app.like_post(self.post_id)
+    
+    def open_post_detail(self):
+        app = MDApp.get_running_app()
+        if app:
+            app.show_post_detail(self)
 
 
 class LoginScreen(Screen):
@@ -376,8 +448,131 @@ class CreatePostScreen(Screen):
         self.ids.content_input.text = ''
 
 
+class PostDetailScreen(Screen):
+    post_data = None
+    
+    def on_pre_enter(self):
+        self.update_post_display()
+    
+    def update_post_display(self):
+        if not self.post_data:
+            return
+        
+        # Обновляем заголовок в тулбаре
+        self.ids.detail_topbar.title = self.post_data.title
+        
+        self.ids.detail_author.text = self.post_data.author
+        self.ids.detail_date.text = self.post_data.formatted_date
+        self.ids.detail_title.text = self.post_data.title
+        self.ids.detail_content.text = self.post_data.content
+        self.ids.detail_likes_count.text = str(self.post_data.likes)
+        
+        # Обновляем иконку лайка
+        like_button = self.ids.detail_like_button
+        if self.post_data.user_liked:
+            like_button.icon = 'heart'
+            like_button.text_color = (1, 0, 0, 1)
+        else:
+            like_button.icon = 'heart-outline'
+            like_button.text_color = (0.5, 0.5, 0.5, 1)
+        
+        # Обновляем комментарии
+        self.update_comments_list()
+    
+    def update_comments_list(self):
+        comments_list = self.ids.detail_comments_list
+        comments_list.clear_widgets()
+        
+        if not self.post_data or not self.post_data.comments_list:
+            label = MDLabel(
+                text="Комментариев пока нет",
+                theme_text_color='Hint',
+                font_style='Caption',
+                halign='center',
+                size_hint_y=None,
+                height=40
+            )
+            comments_list.add_widget(label)
+            return
+        
+        for comment in self.post_data.comments_list:
+            if isinstance(comment, dict):
+                comment_card = MDBoxLayout(
+                    orientation='vertical',
+                    size_hint_y=None,
+                    height=60,
+                    padding=10,
+                    spacing=5
+                )
+                
+                # Автор и дата комментария
+                author_date_box = MDBoxLayout(
+                    size_hint_y=None,
+                    height=20
+                )
+                
+                author_label = MDLabel(
+                    text=comment.get('author_name', 'Аноним'),
+                    font_style='Caption',
+                    theme_text_color='Primary',
+                    bold=True,
+                    size_hint_x=0.7
+                )
+                
+                # Пытаемся получить дату комментария
+                comment_date = ''
+                if 'created_at' in comment:
+                    try:
+                        comment_datetime = datetime.fromisoformat(
+                            comment['created_at'].replace('Z', '+00:00')
+                        )
+                        comment_date = comment_datetime.strftime('%d.%m.%Y %H:%M')
+                    except:
+                        comment_date = comment['created_at'][:16]
+                
+                date_label = MDLabel(
+                    text=comment_date,
+                    font_style='Caption',
+                    theme_text_color='Hint',
+                    halign='right',
+                    size_hint_x=0.3
+                )
+                
+                author_date_box.add_widget(author_label)
+                author_date_box.add_widget(date_label)
+                
+                # Текст комментария
+                text_label = MDLabel(
+                    text=comment.get('text', ''),
+                    font_style='Body2',
+                    theme_text_color='Secondary',
+                    size_hint_y=None,
+                    height=30
+                )
+                
+                comment_card.add_widget(author_date_box)
+                comment_card.add_widget(text_label)
+                comments_list.add_widget(comment_card)
+    
+    def toggle_like(self):
+        if self.post_data:
+            self.post_data.like_post()
+            # Обновляем отображение через небольшой промежуток времени
+            Clock.schedule_once(lambda dt: self.update_post_display(), 0.3)
+    
+    def add_comment(self):
+        text = self.ids.detail_comment_input.text.strip()
+        if text and self.post_data:
+            app = MDApp.get_running_app()
+            if app and app.current_user:
+                app.add_comment(self.post_data.post_id, text)
+                self.ids.detail_comment_input.text = ''
+                # Обновляем комментарии через секунду
+                Clock.schedule_once(lambda dt: self.update_comments_list(), 1.0)
+
+
 class PublicApp(MDApp):
-    API_URL = 'http://192.168.0.18:5000/api'  # Измените на 192.168.0.18 для мобильного доступа
+    API_URL = 'http://192.168.0.18:5000/api'
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -391,7 +586,6 @@ class PublicApp(MDApp):
         return Builder.load_string(KV)
     
     def on_start(self):
-        # Загружаем сохраненные данные пользователя
         try:
             if self.store.exists('user'):
                 self.current_user = self.store.get('user')
@@ -416,8 +610,13 @@ class PublicApp(MDApp):
         else:
             self.show_login_screen()
     
+    def show_post_detail(self, post_card):
+        post_detail_screen = self.root.ids.post_detail_screen
+        if post_detail_screen:
+            post_detail_screen.post_data = post_card
+            self.root.current = 'post_detail'
+    
     def show_profile(self):
-        # Простая функция для демонстрации
         if self.current_user:
             self.show_dialog("Профиль", 
                            f"Имя: {self.current_user.get('username', 'Неизвестно')}\n"
@@ -500,7 +699,6 @@ class PublicApp(MDApp):
         
         for post in result:
             if isinstance(post, dict):
-                # Проверяем, лайкал ли текущий пользователь этот пост
                 user_liked = False
                 if 'liked_by' in post and isinstance(post['liked_by'], list):
                     user_liked = any(
@@ -510,7 +708,7 @@ class PublicApp(MDApp):
                 
                 card = PostCard(
                     size_hint_y=None,
-                    height=400,
+                    height=200,
                     title=post.get('title', 'Без названия'),
                     content=post.get('content', ''),
                     author=post.get('author_name', 'Аноним'),
@@ -518,7 +716,7 @@ class PublicApp(MDApp):
                     created_at=post.get('created_at', ''),
                     post_id=post.get('id', 0),
                     comments_list=post.get('comments', []),
-                    user_liked=user_liked  # Теперь это допустимый аргумент
+                    user_liked=user_liked
                 )
                 posts_list.add_widget(card)
     
@@ -577,6 +775,7 @@ class PublicApp(MDApp):
             self.show_dialog('Ошибка', f'Ошибка при добавлении комментария: {str(e)}')
     
     def handle_comment_added(self, req, result):
+        # Перезагружаем посты для обновления данных
         self.load_posts()
     
     def like_post(self, post_id):
