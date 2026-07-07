@@ -42,8 +42,8 @@ requirements = python3,kivy
 # (str) Icon of the application
 # icon.filename = %(source.dir)s/data/icon.png
 
-# (str) Supported orientation (one of landscape, sensorLandscape, portrait or all)
-orientation = all
+# (str) Supported orientation (one of landscape, sensorLandscape, portrait, sensorPortrait or default)
+orientation = sensor
 
 # (bool) Indicates if the application should be fullscreen or not
 fullscreen = 0
@@ -71,7 +71,7 @@ android.sdk = 33
 android.ndk = 25c
 
 # (bool) Use --debug buildozer command to build in debug mode
-# android.debug = 1
+android.debug = 1
 
 # (list) Android AAR archives to add (takes precedence over local JARs)
 # android.add_aars =
@@ -158,7 +158,7 @@ android.ndk = 25c
 # android.permissions =
 
 # (list) Android features
-# android.features = android.hardware.touchscreen
+# android.features =
 
 # (bool) Use a custom AndroidManifest.xml
 # android.manifest =
@@ -168,39 +168,6 @@ android.ndk = 25c
 
 # (list) Android library to add
 # android.add_library =
-
-# (str) Path to a custom AndroidManifest.xml
-# android.manifest =
-
-# (list) Android library to add
-# android.add_library =
-
-# (str) Android ndk version to use
-# android.ndk = 19c
-
-# (str) Android sdk version to use
-# android.sdk = 26
-
-# (str) Android ant version to use
-# android.ant =
-
-# (bool) Enable or disable Android gradle
-# android.gradle = True
-
-# (bool) Enable or disable Android gradle dependency
-# android.gradle_depends =
-
-# (list) Android gradle dependencies
-# android.gradle_dependencies =
-
-# (str) Path to a custom AndroidManifest.xml
-# android.manifest =
-
-# (list) Android source files to add
-# android.add_src =
-
-# (list) Android assets to add
-# android.add_assets =
 
 #
 # iOS specific
@@ -235,18 +202,6 @@ android.ndk = 25c
 
 # (list) iOS bundle resources
 # ios.bundle_resources =
-
-# (list) iOS extra frameworks
-# ios.extra_frameworks =
-
-# (list) iOS extra libraries
-# ios.extra_libs =
-
-# (list) iOS extra sources
-# ios.extra_sources =
-
-# (list) iOS extra pkg-config
-# ios.extra_pkg_config =
 
 # (list) iOS extra frameworks
 # ios.extra_frameworks =
