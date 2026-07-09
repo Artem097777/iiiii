@@ -59,55 +59,62 @@ orientation = portrait
 # OS X Specific
 #
 
+# change the major version of python used by the app
 osx.python_version = 3
+
+# Kivy version to use
 osx.kivy_version = 1.9.1
 
 #
 # Android specific
 #
 
+# (bool) Indicate if the application should be fullscreen or not
 fullscreen = 1
 
-# (string) Presplash background color
+# (string) Presplash background color (for android toolchain)
 #android.presplash_color = #FFFFFF
 
 # (list) Permissions
 android.permissions = INTERNET
 
-# (int) Target Android API
-android.api = 31
+# (int) Target Android API, should be as high as possible.
+android.api = 33
 
-# (int) Minimum API your APK will support
+# (int) Minimum API your APK will support.
 android.minapi = 21
 
 # (int) Android SDK version to use
 android.sdk = 33
 
-# (str) Android NDK version to use
-android.ndk = 23b
+# (str) Android NDK version to use - ИСПРАВЛЕНО на актуальную версию
+android.ndk = 28c
 
-# (int) Android NDK API to use
+# (int) Android NDK API to use. This is the minimum API your app will support, it should usually match android.minapi.
 android.ndk_api = 21
 
-# (str) Android NDK directory
+# (bool) Use --private data storage (True) or --dir public storage (False)
+#android.private_storage = True
+
+# (str) Android NDK directory (if empty, it will be automatically downloaded.)
 #android.ndk_path =
 
-# (str) Android SDK directory
+# (str) Android SDK directory (if empty, it will be automatically downloaded.)
 #android.sdk_path =
 
-# (str) ANT directory
+# (str) ANT directory (if empty, it will be automatically downloaded.)
 #android.ant_path =
 
 # (bool) If True, then skip trying to update the Android sdk
 #android.skip_update = False
 
-# (bool) If True, then automatically accept SDK license
+# (bool) If True, then automatically accept SDK license agreements.
 #android.accept_sdk_license = False
 
-# (str) Android entry point
+# (str) Android entry point, default is ok for Kivy-based app
 #android.entrypoint = org.kivy.android.PythonActivity
 
-# (str) Android app theme
+# (str) Android app theme, default is ok for Kivy-based app
 # android.apptheme = "@android:style/Theme.NoTitleBar"
 
 # (list) Pattern to whitelist for the whole APK
@@ -119,8 +126,14 @@ android.ndk_api = 21
 # (str) Path to a custom blacklist file
 #android.blacklist_src =
 
-# (list) List of Java .jar files to add
+# (list) List of Java .jar files to add to the libs
 #android.add_src =
+
+# (list) List of Java files to add to the project
+#android.add_src =
+
+# (list) List of Java .jar files that should be added to the project
+#android.add_system_src =
 
 # (list) Java AAR archives to add
 #android.add_aars =
@@ -137,24 +150,35 @@ android.ndk_api = 21
 # (str) Filename of OUYA Console icon
 #android.ouya.icon.filename = %(source.dir)s/data/ouya_icon.png
 
-# (str) XML file to include as an intent filter
+# (str) XML file to include as an intent filter in the activity
 #android.manifest.intent_filters =
 
-# (list) Android additionnal libraries to copy
+# (list) Android additionnal libraries to copy into resources
 #android.add_libs_ressources =
 
-# (str) The Android arch to build for
+# (str) The Android arch to build for, choices: armeabi-v7a, arm64-v8a, x86
 android.arch = arm64-v8a
 
 #
 # iOS specific
 #
 
+# (str) Path to a custom kivy-ios folder
 #ios.kivy_ios_dir = ../kivy-ios
+
+# (str) Path to the iOS SDK from Xcode
 #ios.sdk_path =
+
+# (str) iOS deployment target
 #ios.deployment_target = 9.0
+
+# (str) iOS frameworks to add
 #ios.frameworks = libs/your_ios_library.framework
+
+# (str) iOS plist
 #ios.plist = ios/Info.plist
+
+# (str) iOS bundle identifier
 #ios.bundle_identifier = com.example.myapp
 
 [buildozer]
@@ -165,8 +189,8 @@ log_level = 2
 # (int) Display warning if buildozer is run as root (0 = False, 1 = True)
 warn_on_root = 1
 
-# (str) Path to build artifact storage
+# (str) Path to build artifact storage, absolute or relative to spec file
 # build_dir = ./.buildozer
 
-# (str) Path to build output storage
+# (str) Path to build output (i.e. .apk, .ipa) storage
 # bin_dir = ./bin
