@@ -52,7 +52,7 @@ requirements = python3,kivy==2.1.0
 #icon.filename = %(source.dir)s/data/icon.png
 
 # (str) Supported orientation (one of landscape, sensorLandscape, portrait or all)
-orientation = all
+orientation = sensor
 
 # (list) List of service to declare
 #services = NAME:ENTRYPOINT_TO_PY,NAME2:ENTRYPOINT2_TO_PY
@@ -173,80 +173,6 @@ android.ndk_api = 21
 # (list) Android additionnal libraries to copy into resources
 #android.add_libs_ressources =
 
-# (list) Gradle dependencies to add to the app
-#android.gradle_dependencies =
-
-# (str) python-for-android git branch, defaults to master
-#p4a.branch = master
-
-# (str) Android NDK directory (if empty, it will be automatically downloaded)
-#android.ndk_path =
-
-# (str) Android SDK directory (if empty, it will be automatically downloaded)
-#android.sdk_path =
-
-# (str) Android ANT directory (if empty, it will be automatically downloaded)
-#android.ant_path =
-
-# (bool) If True, then skip trying to update the Android sdk
-# This can be useful to avoid excess Internet downloads or save time
-# when an update is due and you just want to test/build your package
-# android.skip_update = False
-
-# (bool) If True, then automatically accept SDK license
-# agreements. This is intended for automation only.
-# android.accept_sdk_license = False
-
-# (str) Android entry point, default is ok for Kivy-based app
-#android.entrypoint = org.kivy.android.PythonActivity
-
-# (str) Android app theme, default is ok for Kivy-based app
-# android.apptheme = "@android:style/Theme.NoTitleBar"
-
-# (list) Pattern to whitelist for the whole APK
-#android.whitelist =
-
-# (str) Path to a custom whitelist file
-#android.whitelist_src =
-
-# (str) Path to a custom blacklist file
-#android.blacklist_src =
-
-# (list) List of Java .jar files to add to the libs so that pyjnius can access
-# their classes. Don't add jars that you do not need, since extra jars can slow
-# down the build process. Allows wildcards matching, for example:
-# OUYA-ODK/libs/*.jar
-#android.add_src =
-
-# (list) List of Java files to add to the project
-#android.add_src =
-
-# (list) List of Java .jar files that should be added to the project using
-# the "system" path, while still allowing pyjnius to access them.
-#android.add_system_src =
-
-# (list) Java AAR archives to add
-#android.add_aars =
-
-# (list) Gradle dependencies to add
-#android.gradle_dependencies =
-
-# (str) python-for-android branch to use, defaults to master
-#p4a.branch = master
-
-# (str) OUYA Console category. Should be one of GAME or APP
-# If you leave this blank, OUYA support will not be enabled
-#android.ouya.category = GAME
-
-# (str) Filename of OUYA Console icon. It must be a 732x412 png image.
-#android.ouya.icon.filename = %(source.dir)s/data/ouya_icon.png
-
-# (str) XML file to include as an intent filter in the activity
-#android.manifest.intent_filters =
-
-# (list) Android additionnal libraries to copy into resources
-#android.add_libs_ressources =
-
 # (str) The Android arch to build for, choices: armeabi-v7a, arm64-v8a, x86
 android.arch = arm64-v8a
 
@@ -284,28 +210,3 @@ warn_on_root = 1
 
 # (str) Path to build output (i.e. .apk, .ipa) storage
 # bin_dir = ./bin
-
-#    -----------------------------------------------------------------------------
-#    List as sections
-#
-#    You can define all the sections list here.
-#    Each section will generate a custom apk with the specific options.
-#    When you want to build a specific section, just use `buildozer --section <section> android debug`
-#    If you want to build all sections, use `buildozer --sections all android debug`
-#    The options in the default section will be shared between all sections.
-#    The options in a section will override the default section's options.
-#    For more informations, check the documentation.
-#
-#    -----------------------------------------------------------------------------
-
-# (list) List of sections
-# sections = default
-
-# (str) Path to the directory containing the sections
-# sections_dir = ./sections
-
-# (bool) If True, the sections will be built in parallel
-# sections_parallel = False
-
-# (bool) If True, the sections will be built in the same build directory
-# sections_same_dir = False
