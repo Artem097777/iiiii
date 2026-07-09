@@ -35,12 +35,10 @@ version = 0.1
 # version.filename = %(source.dir)s/main.py
 
 # (list) Application requirements
-# comma separated e.g. requirements = sqlite3,kivy
 requirements = python3,kivy==2.1.0
 
 # (str) Custom source folders for requirements
-# Sets custom source for any requirements with recipes
-# requirements.source.kivy = ../../kivy
+#requirements.source.kivy = ../../kivy
 
 # (list) Garden requirements
 #garden_requirements =
@@ -52,7 +50,7 @@ requirements = python3,kivy==2.1.0
 #icon.filename = %(source.dir)s/data/icon.png
 
 # (str) Supported orientation (one of landscape, sensorLandscape, portrait or all)
-orientation = sensor
+orientation = portrait
 
 # (list) List of service to declare
 #services = NAME:ENTRYPOINT_TO_PY,NAME2:ENTRYPOINT2_TO_PY
@@ -61,36 +59,25 @@ orientation = sensor
 # OS X Specific
 #
 
-#
-# author = © Copyright Info
-
-# change the major version of python used by the app
 osx.python_version = 3
-
-# Kivy version to use
 osx.kivy_version = 1.9.1
 
 #
 # Android specific
 #
 
-# (bool) Indicate if the application should be fullscreen or not
 fullscreen = 1
 
-# (string) Presplash background color (for android toolchain)
-# Supported formats are: #RRGGBB #AARRGGBB or one of the following names:
-# red, blue, green, black, white, gray, cyan, magenta, yellow, lightgray,
-# darkgray, grey, lightgrey, darkgrey, aqua, fuchsia, lime, maroon, navy,
-# olive, purple, silver, teal.
+# (string) Presplash background color
 #android.presplash_color = #FFFFFF
 
 # (list) Permissions
 android.permissions = INTERNET
 
-# (int) Target Android API, should be as high as possible.
+# (int) Target Android API
 android.api = 31
 
-# (int) Minimum API your APK will support.
+# (int) Minimum API your APK will support
 android.minapi = 21
 
 # (int) Android SDK version to use
@@ -99,34 +86,28 @@ android.sdk = 33
 # (str) Android NDK version to use
 android.ndk = 23b
 
-# (int) Android NDK API to use. This is the minimum API your app will support, it should usually match android.minapi.
+# (int) Android NDK API to use
 android.ndk_api = 21
 
-# (bool) Use --private data storage (True) or --dir public storage (False)
-#android.private_storage = True
-
-# (str) Android NDK directory (if empty, it will be automatically downloaded.)
+# (str) Android NDK directory
 #android.ndk_path =
 
-# (str) Android SDK directory (if empty, it will be automatically downloaded.)
+# (str) Android SDK directory
 #android.sdk_path =
 
-# (str) ANT directory (if empty, it will be automatically downloaded.)
+# (str) ANT directory
 #android.ant_path =
 
 # (bool) If True, then skip trying to update the Android sdk
-# This can be useful to avoid excess Internet downloads or save time
-# when an update is due and you just want to test/build your package
-# android.skip_update = False
+#android.skip_update = False
 
 # (bool) If True, then automatically accept SDK license
-# agreements. This is intended for automation only.
-# android.accept_sdk_license = False
+#android.accept_sdk_license = False
 
-# (str) Android entry point, default is ok for Kivy-based app
+# (str) Android entry point
 #android.entrypoint = org.kivy.android.PythonActivity
 
-# (str) Android app theme, default is ok for Kivy-based app
+# (str) Android app theme
 # android.apptheme = "@android:style/Theme.NoTitleBar"
 
 # (list) Pattern to whitelist for the whole APK
@@ -138,18 +119,8 @@ android.ndk_api = 21
 # (str) Path to a custom blacklist file
 #android.blacklist_src =
 
-# (list) List of Java .jar files to add to the libs so that pyjnius can access
-# their classes. Don't add jars that you do not need, since extra jars can slow
-# down the build process. Allows wildcards matching, for example:
-# OUYA-ODK/libs/*.jar
+# (list) List of Java .jar files to add
 #android.add_src =
-
-# (list) List of Java files to add to the project
-#android.add_src =
-
-# (list) List of Java .jar files that should be added to the project using
-# the "system" path, while still allowing pyjnius to access them.
-#android.add_system_src =
 
 # (list) Java AAR archives to add
 #android.add_aars =
@@ -157,44 +128,33 @@ android.ndk_api = 21
 # (list) Gradle dependencies to add
 #android.gradle_dependencies =
 
-# (str) python-for-android branch to use, defaults to master
+# (str) python-for-android branch to use
 #p4a.branch = master
 
-# (str) OUYA Console category. Should be one of GAME or APP
-# If you leave this blank, OUYA support will not be enabled
+# (str) OUYA Console category
 #android.ouya.category = GAME
 
-# (str) Filename of OUYA Console icon. It must be a 732x412 png image.
+# (str) Filename of OUYA Console icon
 #android.ouya.icon.filename = %(source.dir)s/data/ouya_icon.png
 
-# (str) XML file to include as an intent filter in the activity
+# (str) XML file to include as an intent filter
 #android.manifest.intent_filters =
 
-# (list) Android additionnal libraries to copy into resources
+# (list) Android additionnal libraries to copy
 #android.add_libs_ressources =
 
-# (str) The Android arch to build for, choices: armeabi-v7a, arm64-v8a, x86
+# (str) The Android arch to build for
 android.arch = arm64-v8a
 
 #
 # iOS specific
 #
 
-# (str) Path to a custom kivy-ios folder
 #ios.kivy_ios_dir = ../kivy-ios
-# (str) Path to the iOS SDK from Xcode
 #ios.sdk_path =
-
-# (str) iOS deployment target
 #ios.deployment_target = 9.0
-
-# (str) iOS frameworks to add
 #ios.frameworks = libs/your_ios_library.framework
-
-# (str) iOS plist
 #ios.plist = ios/Info.plist
-
-# (str) iOS bundle identifier
 #ios.bundle_identifier = com.example.myapp
 
 [buildozer]
@@ -205,8 +165,8 @@ log_level = 2
 # (int) Display warning if buildozer is run as root (0 = False, 1 = True)
 warn_on_root = 1
 
-# (str) Path to build artifact storage, absolute or relative to spec file
+# (str) Path to build artifact storage
 # build_dir = ./.buildozer
 
-# (str) Path to build output (i.e. .apk, .ipa) storage
+# (str) Path to build output storage
 # bin_dir = ./bin
