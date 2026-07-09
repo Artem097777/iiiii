@@ -1,10 +1,10 @@
 [app]
 
 # (str) Title of your application
-title = Square Game
+title = Adaptive Joystick
 
 # (str) Package name
-package.name = squaregame
+package.name = adaptivejoystick
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = org.example
@@ -13,47 +13,76 @@ package.domain = org.example
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py,png,jpg,kv,atlas,ttf
+source.include_exts = py,png,jpg,kv,atlas
 
 # (list) List of inclusions using pattern matching
-# source.include_patterns = assets/*,images/*.png
+#source.include_patterns = assets/*,images/*.png
 
 # (list) Source files to exclude (let empty to not exclude anything)
-# source.exclude_exts = spec
+#source.exclude_exts = spec
 
-# (list) List of directory names to not search for recursive includes
-# source.exclude_patterns = 
+# (list) List of directory to exclude (let empty to not exclude anything)
+#source.exclude_dirs = tests, bin, venv
+
+# (list) List of exclusions using pattern matching
+#source.exclude_patterns = license,images/*.jpg
 
 # (str) Application versioning (method 1)
-version = 1.0.0
+version = 0.1
+
+# (str) Application versioning (method 2)
+# version.regex = __version__ = ['"](.*)['"]
+# version.filename = %(source.dir)s/main.py
 
 # (list) Application requirements
-requirements = python3,kivy
+# comma separated e.g. requirements = sqlite3,kivy
+requirements = python3,kivy==2.1.0
 
 # (str) Custom source folders for requirements
-# requirements.source = 
+# Sets custom source for any requirements with recipes
+# requirements.source.kivy = ../../kivy
 
 # (list) Garden requirements
-# garden_requirements =
+#garden_requirements =
 
 # (str) Presplash of the application
-# presplash.filename = %(source.dir)s/data/presplash.png
+#presplash.filename = %(source.dir)s/data/presplash.png
 
 # (str) Icon of the application
-# icon.filename = %(source.dir)s/data/icon.png
+#icon.filename = %(source.dir)s/data/icon.png
 
-# (str) Supported orientation (one of landscape, sensorLandscape, portrait, sensorPortrait or default)
-orientation = sensor
+# (str) Supported orientation (one of landscape, sensorLandscape, portrait or all)
+orientation = all
 
-# (bool) Indicates if the application should be fullscreen or not
-fullscreen = 0
+# (list) List of service to declare
+#services = NAME:ENTRYPOINT_TO_PY,NAME2:ENTRYPOINT2_TO_PY
+
+#
+# OS X Specific
+#
+
+#
+# author = © Copyright Info
+
+# change the major version of python used by the app
+osx.python_version = 3
+
+# Kivy version to use
+osx.kivy_version = 1.9.1
 
 #
 # Android specific
 #
 
-# (bool) Indicates if the application should be hidden or not
-# android.hide = 0
+# (bool) Indicate if the application should be fullscreen or not
+fullscreen = 1
+
+# (string) Presplash background color (for android toolchain)
+# Supported formats are: #RRGGBB #AARRGGBB or one of the following names:
+# red, blue, green, black, white, gray, cyan, magenta, yellow, lightgray,
+# darkgray, grey, lightgrey, darkgrey, aqua, fuchsia, lime, maroon, navy,
+# olive, purple, silver, teal.
+#android.presplash_color = #FFFFFF
 
 # (list) Permissions
 android.permissions = INTERNET
@@ -68,231 +97,215 @@ android.minapi = 21
 android.sdk = 33
 
 # (str) Android NDK version to use
-android.ndk = 25c
+android.ndk = 23b
 
-# (bool) Use --debug buildozer command to build in debug mode
-android.debug = 1
+# (int) Android NDK API to use. This is the minimum API your app will support, it should usually match android.minapi.
+android.ndk_api = 21
 
-# (list) Android AAR archives to add (takes precedence over local JARs)
-# android.add_aars =
+# (bool) Use --private data storage (True) or --dir public storage (False)
+#android.private_storage = True
+
+# (str) Android NDK directory (if empty, it will be automatically downloaded.)
+#android.ndk_path =
+
+# (str) Android SDK directory (if empty, it will be automatically downloaded.)
+#android.sdk_path =
+
+# (str) ANT directory (if empty, it will be automatically downloaded.)
+#android.ant_path =
+
+# (bool) If True, then skip trying to update the Android sdk
+# This can be useful to avoid excess Internet downloads or save time
+# when an update is due and you just want to test/build your package
+# android.skip_update = False
+
+# (bool) If True, then automatically accept SDK license
+# agreements. This is intended for automation only.
+# android.accept_sdk_license = False
+
+# (str) Android entry point, default is ok for Kivy-based app
+#android.entrypoint = org.kivy.android.PythonActivity
+
+# (str) Android app theme, default is ok for Kivy-based app
+# android.apptheme = "@android:style/Theme.NoTitleBar"
+
+# (list) Pattern to whitelist for the whole APK
+#android.whitelist =
+
+# (str) Path to a custom whitelist file
+#android.whitelist_src =
+
+# (str) Path to a custom blacklist file
+#android.blacklist_src =
+
+# (list) List of Java .jar files to add to the libs so that pyjnius can access
+# their classes. Don't add jars that you do not need, since extra jars can slow
+# down the build process. Allows wildcards matching, for example:
+# OUYA-ODK/libs/*.jar
+#android.add_src =
+
+# (list) List of Java files to add to the project
+#android.add_src =
+
+# (list) List of Java .jar files that should be added to the project using
+# the "system" path, while still allowing pyjnius to access them.
+#android.add_system_src =
+
+# (list) Java AAR archives to add
+#android.add_aars =
 
 # (list) Gradle dependencies to add
-# android.gradle_dependencies =
+#android.gradle_dependencies =
 
-# (bool) Enable or disable gradle dependency resolution
-# android.gradle_depends =
+# (str) python-for-android branch to use, defaults to master
+#p4a.branch = master
 
-# (str) Path to a custom AndroidManifest.xml
-# android.manifest =
+# (str) OUYA Console category. Should be one of GAME or APP
+# If you leave this blank, OUYA support will not be enabled
+#android.ouya.category = GAME
 
-# (str) Path to a custom toolchain recipe
-# android.toolchain =
+# (str) Filename of OUYA Console icon. It must be a 732x412 png image.
+#android.ouya.icon.filename = %(source.dir)s/data/ouya_icon.png
 
-# (list) Java source files to add
-# android.add_src =
+# (str) XML file to include as an intent filter in the activity
+#android.manifest.intent_filters =
 
-# (list) Python source files to add
-# android.add_py =
+# (list) Android additionnal libraries to copy into resources
+#android.add_libs_ressources =
 
-# (list) Java classes to add as a jar
-# android.add_jar =
+# (list) Gradle dependencies to add to the app
+#android.gradle_dependencies =
 
-# (list) Python source files to add as a jar
-# android.add_py_jar =
+# (str) python-for-android git branch, defaults to master
+#p4a.branch = master
 
-# (list) Java classes to add as a directory
-# android.add_dir =
+# (str) Android NDK directory (if empty, it will be automatically downloaded)
+#android.ndk_path =
 
-# (list) Python source files to add as a directory
-# android.add_py_dir =
+# (str) Android SDK directory (if empty, it will be automatically downloaded)
+#android.sdk_path =
 
-# (list) Android assets to add
-# android.add_assets =
+# (str) Android ANT directory (if empty, it will be automatically downloaded)
+#android.ant_path =
 
-# (str) Activity class to use
-# android.activity_class_name = org.kivy.android.PythonActivity
+# (bool) If True, then skip trying to update the Android sdk
+# This can be useful to avoid excess Internet downloads or save time
+# when an update is due and you just want to test/build your package
+# android.skip_update = False
 
-# (str) Android theme
-# android.theme = @android:style/Theme.NoTitleBar
+# (bool) If True, then automatically accept SDK license
+# agreements. This is intended for automation only.
+# android.accept_sdk_license = False
 
-# (list) Supported CPU architectures
-# android.arch = armeabi-v7a,arm64-v8a
+# (str) Android entry point, default is ok for Kivy-based app
+#android.entrypoint = org.kivy.android.PythonActivity
 
-# (bool) Whether to enable AndroidX
-# android.enable_androidx = True
+# (str) Android app theme, default is ok for Kivy-based app
+# android.apptheme = "@android:style/Theme.NoTitleBar"
 
-# (bool) Whether to add a meta-data to set the OpenGL ES version
-# android.gles_version = 3
+# (list) Pattern to whitelist for the whole APK
+#android.whitelist =
 
-# (str) Android package name to use
-# android.package_name =
+# (str) Path to a custom whitelist file
+#android.whitelist_src =
 
-# (str) Android private storage path
-# android.private_storage =
+# (str) Path to a custom blacklist file
+#android.blacklist_src =
 
-# (str) Android logcat filters
-# android.logcat_filters = *:S python:D
+# (list) List of Java .jar files to add to the libs so that pyjnius can access
+# their classes. Don't add jars that you do not need, since extra jars can slow
+# down the build process. Allows wildcards matching, for example:
+# OUYA-ODK/libs/*.jar
+#android.add_src =
 
-# (str) Android logcat tags to exclude
-# android.logcat_exclude_tags =
+# (list) List of Java files to add to the project
+#android.add_src =
 
-# (bool) Use a custom activity
-# android.use_custom_activity =
+# (list) List of Java .jar files that should be added to the project using
+# the "system" path, while still allowing pyjnius to access them.
+#android.add_system_src =
 
-# (str) Custom activity to use
-# android.custom_activity = 
+# (list) Java AAR archives to add
+#android.add_aars =
 
-# (list) Android services to add
-# android.services =
+# (list) Gradle dependencies to add
+#android.gradle_dependencies =
 
-# (list) Android services to add as a service
-# android.add_service =
+# (str) python-for-android branch to use, defaults to master
+#p4a.branch = master
 
-# (list) Android receivers to add
-# android.receivers =
+# (str) OUYA Console category. Should be one of GAME or APP
+# If you leave this blank, OUYA support will not be enabled
+#android.ouya.category = GAME
 
-# (list) Android providers to add
-# android.providers =
+# (str) Filename of OUYA Console icon. It must be a 732x412 png image.
+#android.ouya.icon.filename = %(source.dir)s/data/ouya_icon.png
 
-# (list) Android permissions
-# android.permissions =
+# (str) XML file to include as an intent filter in the activity
+#android.manifest.intent_filters =
 
-# (list) Android features
-# android.features =
+# (list) Android additionnal libraries to copy into resources
+#android.add_libs_ressources =
 
-# (bool) Use a custom AndroidManifest.xml
-# android.manifest =
-
-# (list) Android meta-data
-# android.meta_data =
-
-# (list) Android library to add
-# android.add_library =
+# (str) The Android arch to build for, choices: armeabi-v7a, arm64-v8a, x86
+android.arch = arm64-v8a
 
 #
 # iOS specific
 #
 
-# (str) Path to a custom .plist file
-# ios.plist =
+# (str) Path to a custom kivy-ios folder
+#ios.kivy_ios_dir = ../kivy-ios
+# (str) Path to the iOS SDK from Xcode
+#ios.sdk_path =
 
-# (str) Path to a custom .entitlements file
-# ios.entitlements =
+# (str) iOS deployment target
+#ios.deployment_target = 9.0
 
-# (str) Path to a custom .mobileprovision file
-# ios.mobileprovision =
+# (str) iOS frameworks to add
+#ios.frameworks = libs/your_ios_library.framework
 
-# (bool) Use Xcode 8
-# ios.use_xcode8 = False
+# (str) iOS plist
+#ios.plist = ios/Info.plist
 
-# (str) iOS framework to add
-# ios.framework =
+# (str) iOS bundle identifier
+#ios.bundle_identifier = com.example.myapp
 
-# (str) iOS library to add
-# ios.lib =
+[buildozer]
 
-# (list) iOS frameworks to add
-# ios.frameworks =
+# (int) Log level (0 = error only, 1 = info, 2 = debug (with command output))
+log_level = 2
 
-# (list) iOS libraries to add
-# ios.libs =
+# (int) Display warning if buildozer is run as root (0 = False, 1 = True)
+warn_on_root = 1
 
-# (list) iOS plist items
-# ios.plist_items =
+# (str) Path to build artifact storage, absolute or relative to spec file
+# build_dir = ./.buildozer
 
-# (list) iOS bundle resources
-# ios.bundle_resources =
+# (str) Path to build output (i.e. .apk, .ipa) storage
+# bin_dir = ./bin
 
-# (list) iOS extra frameworks
-# ios.extra_frameworks =
-
-# (list) iOS extra libraries
-# ios.extra_libs =
-
-# (list) iOS extra sources
-# ios.extra_sources =
-
-# (list) iOS extra pkg-config
-# ios.extra_pkg_config =
-
+#    -----------------------------------------------------------------------------
+#    List as sections
 #
-# Windows specific
+#    You can define all the sections list here.
+#    Each section will generate a custom apk with the specific options.
+#    When you want to build a specific section, just use `buildozer --section <section> android debug`
+#    If you want to build all sections, use `buildozer --sections all android debug`
+#    The options in the default section will be shared between all sections.
+#    The options in a section will override the default section's options.
+#    For more informations, check the documentation.
 #
+#    -----------------------------------------------------------------------------
 
-# (bool) Use Pygame or Pygame_SDL2
-# windows.python_requires =
+# (list) List of sections
+# sections = default
 
-# (list) Windows requirements
-# windows.requirements =
+# (str) Path to the directory containing the sections
+# sections_dir = ./sections
 
-# (str) Windows architecture
-# windows.arch =
+# (bool) If True, the sections will be built in parallel
+# sections_parallel = False
 
-# (str) Windows version
-# windows.version =
-
-# (str) Windows publisher
-# windows.publisher =
-
-# (str) Windows display name
-# windows.display_name =
-
-#
-# macOS specific
-#
-
-# (list) macOS requirements
-# macos.requirements =
-
-# (str) macOS architecture
-# macos.arch =
-
-# (str) macOS version
-# macos.version =
-
-# (str) macOS publisher
-# macos.publisher =
-
-# (str) macOS display name
-# macos.display_name =
-
-#
-# Linux specific
-#
-
-# (list) Linux requirements
-# linux.requirements =
-
-# (str) Linux architecture
-# linux.arch =
-
-# (str) Linux version
-# linux.version =
-
-# (str) Linux publisher
-# linux.publisher =
-
-# (str) Linux display name
-# linux.display_name =
-
-#
-# Buildozer global settings
-#
-
-# (str) Path to buildozer directory
-# buildozer.dir = ~/.buildozer
-
-# (bool) Enable or disable buildozer logging
-# buildozer.log = 1
-
-# (list) Buildozer global requirements
-# buildozer.requirements =
-
-# (str) Buildozer log level (one of info, debug, warning, error, critical)
-# buildozer.log_level = info
-
-# (bool) Enable or disable buildozer color output
-# buildozer.color = 1
-
-# (bool) Enable or disable buildozer verbose output
-# buildozer.verbose = 0
+# (bool) If True, the sections will be built in the same build directory
+# sections_same_dir = False
