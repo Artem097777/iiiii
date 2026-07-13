@@ -2,10 +2,15 @@ from kivy.config import Config
 Config.set('graphics', 'multisamples', '0')
 Config.set('graphics', 'window_state', 'visible')
 
+# ОТКЛЮЧАЕМ ВИРТУАЛЬНУЮ КЛАВИАТУРУ
+from kivy.core.window import Window
+Window.softinput_mode = 'below_target'  # или 'pan' — но лучше 'below_target'
+# Или можно полностью отключить автоматический вызов:
+# Window.softinput_mode = 'nothing'  # не работает в некоторых версиях
+
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.graphics import Rectangle, Color, Ellipse, Line
-from kivy.core.window import Window
 from kivy.clock import Clock
 from math import sqrt
 
@@ -33,7 +38,6 @@ class AdaptiveJoystick(Widget):
 
         self.update_size()
         Window.bind(on_resize=self.on_window_resize)
-        # Изначально скрыт
         self.hide()
 
     def on_window_resize(self, window, width, height):
@@ -133,6 +137,7 @@ class AdaptiveSquare(Widget):
 
         self.speed = 200
 
+        # ПОДПИСКА НА КЛАВИАТУРУ БЕЗ ВЫЗОВА ЭКРАННОЙ КЛАВИАТУРЫ
         self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
         self._keyboard.bind(on_key_down=self._on_key_down)
         Window.bind(on_resize=self.on_window_resize)
@@ -153,7 +158,7 @@ class AdaptiveSquare(Widget):
         self._keyboard = None
 
     def _on_key_down(self, keyboard, keycode, text, modifiers):
-        # При нажатии любой клавиши немедленно скрываем джойстик
+        # При нажатии клавиши скрываем джойстик
         self.joystick.hide()
 
         step = 10
@@ -183,9 +188,7 @@ class AdaptiveSquare(Widget):
         self.move_to(x, y)
 
     def on_touch_down(self, touch):
-        # При касании квадрата показываем джойстик
         self.joystick.show()
-        # Не перехватываем событие, чтобы джойстик тоже мог его получить
         return super().on_touch_down(touch)
 
 
@@ -195,7 +198,6 @@ class GameWidget(Widget):
         self.joystick = joystick
 
     def on_touch_down(self, touch):
-        # Любое касание экрана показывает джойстик
         self.joystick.show()
         return super().on_touch_down(touch)
 
@@ -211,7 +213,6 @@ class GameApp(App):
         self.square = AdaptiveSquare(self.joystick)
         root.add_widget(self.square)
 
-        # Принудительно скрываем джойстик при старте
         self.joystick.hide()
 
         Clock.schedule_once(lambda dt: self.square.update_size_and_position(), 0)
