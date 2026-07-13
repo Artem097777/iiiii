@@ -2,11 +2,9 @@ from kivy.config import Config
 Config.set('graphics', 'multisamples', '0')
 Config.set('graphics', 'window_state', 'visible')
 
-# ОТКЛЮЧАЕМ ВИРТУАЛЬНУЮ КЛАВИАТУРУ
+# ОТКЛЮЧАЕМ ВИРТУАЛЬНУЮ КЛАВИАТУРУ (для планшета Xiaomi)
 from kivy.core.window import Window
-Window.softinput_mode = 'below_target'  # или 'pan' — но лучше 'below_target'
-# Или можно полностью отключить автоматический вызов:
-# Window.softinput_mode = 'nothing'  # не работает в некоторых версиях
+Window.softinput_mode = 'below_target'  # предотвращает появление экранной клавиатуры
 
 from kivy.app import App
 from kivy.uix.widget import Widget
@@ -135,12 +133,19 @@ class AdaptiveSquare(Widget):
             Color(0, 0.8, 0.8, 1)
             self.rect = Rectangle(pos=self.pos, size=self.size)
 
-        self.speed = 200
+        self.speed = 300  # пикселей в секунду
 
-        # ПОДПИСКА НА КЛАВИАТУРУ БЕЗ ВЫЗОВА ЭКРАННОЙ КЛАВИАТУРЫ
+        # Клавиши, которые зажаты в данный момент
+        self.keys_pressed = set()
+
+        # Подписка на клавиатуру
         self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
         self._keyboard.bind(on_key_down=self._on_key_down)
+        self._keyboard.bind(on_key_up=self._on_key_up)
         Window.bind(on_resize=self.on_window_resize)
+
+        # Запускаем обновление движения от клавиатуры
+        Clock.schedule_interval(self.update_keyboard_movement, 1/60)
 
     def on_window_resize(self, window, width, height):
         self.update_size_and_position()
@@ -155,25 +160,57 @@ class AdaptiveSquare(Widget):
 
     def _keyboard_closed(self):
         self._keyboard.unbind(on_key_down=self._on_key_down)
+        self._keyboard.unbind(on_key_up=self._on_key_up)
         self._keyboard = None
 
     def _on_key_down(self, keyboard, keycode, text, modifiers):
         # При нажатии клавиши скрываем джойстик
         self.joystick.hide()
+        # Добавляем клавишу в набор зажатых
+        key = keycode[1].lower()
+        self.keys_pressed.add(key)
 
-        step = 10
-        x, y = self.pos
-        if keycode[1] == 'left':
-            x -= step
-        elif keycode[1] == 'right':
-            x += step
-        elif keycode[1] == 'up':
-            y += step
-        elif keycode[1] == 'down':
-            y -= step
-        else:
-            return
-        self.move_to(x, y)
+    def _on_key_up(self, keyboard, keycode):
+        # Удаляем клавишу из набора зажатых
+        key = keycode[1].lower()
+        if key in self.keys_pressed:
+            self.keys_pressed.remove(key)
+
+    def update_keyboard_movement(self, dt):
+        """Плавное движение от зажатых клавиш WASD и стрелок."""
+        dx, dy = 0, 0
+        
+        # Проверяем WASD
+        if 'w' in self.keys_pressed:
+            dy += 1
+        if 's' in self.keys_pressed:
+            dy -= 1
+        if 'a' in self.keys_pressed:
+            dx -= 1
+        if 'd' in self.keys_pressed:
+            dx += 1
+            
+        # Проверяем стрелки
+        if 'up' in self.keys_pressed:
+            dy += 1
+        if 'down' in self.keys_pressed:
+            dy -= 1
+        if 'left' in self.keys_pressed:
+            dx -= 1
+        if 'right' in self.keys_pressed:
+            dx += 1
+            
+        # Нормализуем вектор для диагонального движения
+        if dx != 0 and dy != 0:
+            length = sqrt(dx*dx + dy*dy)
+            dx /= length
+            dy /= length
+            
+        # Двигаем квадрат
+        if dx != 0 or dy != 0:
+            x = self.pos[0] + dx * self.speed * dt
+            y = self.pos[1] + dy * self.speed * dt
+            self.move_to(x, y)
 
     def move_to(self, x, y):
         w, h = Window.width, Window.height
@@ -218,6 +255,7 @@ class GameApp(App):
         Clock.schedule_once(lambda dt: self.square.update_size_and_position(), 0)
         Clock.schedule_once(lambda dt: self.joystick.update_size(), 0)
 
+        # Обновление движения от джойстика
         Clock.schedule_interval(self.update_joystick_movement, 1/60)
         return root
 
