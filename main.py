@@ -10,8 +10,40 @@ from kivy.uix.widget import Widget
 from kivy.graphics import Rectangle, Color, Ellipse
 from kivy.clock import Clock
 from kivy.uix.label import Label
-from kivy.core.window import Window
+from kivy.uix.button import Button
 from math import sqrt
+
+
+# ---------- ВИРТУАЛЬНАЯ КНОПКА (для эмуляции клавиш) ----------
+class KeyButton(Button):
+    """Кнопка, которая эмулирует нажатие/отпускание клавиши."""
+    def __init__(self, key_name, keys_dict, **kwargs):
+        super().__init__(**kwargs)
+        self.key_name = key_name
+        self.keys = keys_dict
+        self.background_color = (0.3, 0.3, 0.3, 0.6)   # полупрозрачный фон
+        self.color = (1, 1, 1, 0.9)
+        self.font_size = 20
+        self.size_hint = (None, None)
+        self.size = (50, 50)
+
+    def on_touch_down(self, touch):
+        if self.collide_point(*touch.pos):
+            self.keys[self.key_name] = True
+            self.background_color = (0, 0.8, 0.8, 0.8)   # подсветка при нажатии
+            return True
+        return super().on_touch_down(touch)
+
+    def on_touch_up(self, touch):
+        if self.collide_point(*touch.pos):
+            self.keys[self.key_name] = False
+            self.background_color = (0.3, 0.3, 0.3, 0.6)
+            return True
+        # Если палец ушёл за пределы кнопки, но кнопка была нажата – отпускаем
+        if self.keys.get(self.key_name, False):
+            self.keys[self.key_name] = False
+            self.background_color = (0.3, 0.3, 0.3, 0.6)
+        return super().on_touch_up(touch)
 
 
 # ---------- ДЖОЙСТИК (без изменений) ----------
@@ -99,7 +131,7 @@ class Joystick(Widget):
         return self.dx, self.dy
 
 
-# ---------- КВАДРАТ (исправлена обработка клавиш) ----------
+# ---------- КВАДРАТ (с поддержкой клавиатуры и кнопок) ----------
 class AdaptiveSquare(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -117,7 +149,7 @@ class AdaptiveSquare(Widget):
             'd': False, 'right': False
         }
 
-        # ----- НАДЁЖНАЯ ПРИВЯЗКА КЛАВИАТУРЫ (через Window.on_keyboard) -----
+        # Подключаем физическую клавиатуру (если есть)
         self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
         self._keyboard.bind(on_key_down=self._on_key_down)
         self._keyboard.bind(on_key_up=self._on_key_up)
@@ -141,26 +173,21 @@ class AdaptiveSquare(Widget):
         self.rect.size = self.size
 
     def _on_key_down(self, keyboard, keycode, text, modifiers):
-        """Обработка нажатия клавиши."""
-        # keycode - это кортеж (код, имя)
         if isinstance(keycode, (list, tuple)) and len(keycode) > 1:
             key_name = keycode[1].lower()
         else:
             key_name = str(keycode).lower()
         if key_name in self.keys:
             self.keys[key_name] = True
-            print(f"Клавиша {key_name} нажата")  # отладка
         return True
 
     def _on_key_up(self, keyboard, keycode):
-        """Обработка отпускания клавиши."""
         if isinstance(keycode, (list, tuple)) and len(keycode) > 1:
             key_name = keycode[1].lower()
         else:
             key_name = str(keycode).lower()
         if key_name in self.keys:
             self.keys[key_name] = False
-            print(f"Клавиша {key_name} отпущена")  # отладка
         return True
 
     def move_to(self, x, y):
@@ -176,43 +203,65 @@ class AdaptiveSquare(Widget):
         self.move_to(x, y)
 
 
-# ---------- ИГРОВОЙ ВИДЖЕТ ----------
+# ---------- ИГРОВОЙ ВИДЖЕТ (с виртуальными кнопками) ----------
 class GameWidget(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.square = AdaptiveSquare()
         self.add_widget(self.square)
 
+        # Джойстик
         self.joystick = Joystick()
         self.add_widget(self.joystick)
 
-        # Подсказки (сдвинуты вправо, чтобы не мешать джойстику)
-        controls_label = Label(
-            text="[b]УПРАВЛЕНИЕ:[/b]\nW/↑ - вверх\nS/↓ - вниз\nA/← - влево\nD/→ - вправо",
-            pos=(180, 20),
-            size_hint=(None, None),
-            size=(200, 140),
-            color=(1, 1, 1, 0.8),
-            font_size=16,
-            markup=True,
-            halign='left',
-            valign='top'
-        )
-        controls_label.bind(size=controls_label.setter('text_size'))
-        self.add_widget(controls_label)
+        # ----- Виртуальные кнопки для WASD и стрелок -----
+        self.keys = self.square.keys  # ссылка на словарь состояний
 
-        info_label = Label(
-            text="Квадрат можно перемещать\nклавиатурой или джойстиком",
-            pos=(180, Window.height - 60),
-            size_hint=(None, None),
-            size=(250, 50),
-            color=(0.8, 0.8, 0.8, 0.6),
-            font_size=12,
-            halign='left',
-            valign='top'
-        )
-        info_label.bind(size=info_label.setter('text_size'))
-        self.add_widget(info_label)
+        # Группа WASD (расположена над джойстиком, слева)
+        wasd_positions = {
+            'w': (35, 220),
+            'a': (10, 195),
+            's': (35, 195),
+            'd': (60, 195),
+        }
+        self.wasd_buttons = []
+        for key, pos in wasd_positions.items():
+            btn = KeyButton(key, self.keys, text=key.upper())
+            btn.pos = pos
+            self.add_widget(btn)
+            self.wasd_buttons.append(btn)
+
+        # Группа стрелок (справа внизу)
+        arrow_positions = {
+            'up': (Window.width - 130, 70),
+            'left': (Window.width - 155, 45),
+            'down': (Window.width - 130, 45),
+            'right': (Window.width - 105, 45),
+        }
+        self.arrow_buttons = []
+        for key, pos in arrow_positions.items():
+            label = '↑' if key == 'up' else '↓' if key == 'down' else '←' if key == 'left' else '→'
+            btn = KeyButton(key, self.keys, text=label)
+            btn.pos = pos
+            self.add_widget(btn)
+            self.arrow_buttons.append(btn)
+
+        # Подсказки (временно убраны, чтобы не мешать)
+
+        # Привязка изменения размера окна
+        Window.bind(on_resize=self.on_window_resize)
+
+    def on_window_resize(self, window, width, height):
+        # Обновляем позиции стрелок при изменении размера окна
+        arrow_positions = {
+            'up': (width - 130, 70),
+            'left': (width - 155, 45),
+            'down': (width - 130, 45),
+            'right': (width - 105, 45),
+        }
+        for btn in self.arrow_buttons:
+            new_pos = arrow_positions.get(btn.key_name, btn.pos)
+            btn.pos = new_pos
 
 
 # ---------- ПРИЛОЖЕНИЕ ----------
