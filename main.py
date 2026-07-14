@@ -3,6 +3,7 @@ Config.set('graphics', 'multisamples', '0')
 Config.set('graphics', 'window_state', 'visible')
 
 from kivy.core.window import Window
+# Используем стандартный режим 'pan' (он безопасен и не вызывает ошибок)
 Window.softinput_mode = 'pan'
 
 from kivy.app import App
@@ -14,14 +15,13 @@ from kivy.uix.button import Button
 from math import sqrt
 
 
-# ---------- ВИРТУАЛЬНАЯ КНОПКА (для эмуляции клавиш) ----------
+# ---------- ВИРТУАЛЬНАЯ КНОПКА ----------
 class KeyButton(Button):
-    """Кнопка, которая эмулирует нажатие/отпускание клавиши."""
     def __init__(self, key_name, keys_dict, **kwargs):
         super().__init__(**kwargs)
         self.key_name = key_name
         self.keys = keys_dict
-        self.background_color = (0.3, 0.3, 0.3, 0.6)   # полупрозрачный фон
+        self.background_color = (0.3, 0.3, 0.3, 0.6)
         self.color = (1, 1, 1, 0.9)
         self.font_size = 20
         self.size_hint = (None, None)
@@ -30,7 +30,7 @@ class KeyButton(Button):
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
             self.keys[self.key_name] = True
-            self.background_color = (0, 0.8, 0.8, 0.8)   # подсветка при нажатии
+            self.background_color = (0, 0.8, 0.8, 0.8)
             return True
         return super().on_touch_down(touch)
 
@@ -39,14 +39,13 @@ class KeyButton(Button):
             self.keys[self.key_name] = False
             self.background_color = (0.3, 0.3, 0.3, 0.6)
             return True
-        # Если палец ушёл за пределы кнопки, но кнопка была нажата – отпускаем
         if self.keys.get(self.key_name, False):
             self.keys[self.key_name] = False
             self.background_color = (0.3, 0.3, 0.3, 0.6)
         return super().on_touch_up(touch)
 
 
-# ---------- ДЖОЙСТИК (без изменений) ----------
+# ---------- ДЖОЙСТИК ----------
 class Joystick(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -131,7 +130,7 @@ class Joystick(Widget):
         return self.dx, self.dy
 
 
-# ---------- КВАДРАТ (с поддержкой клавиатуры и кнопок) ----------
+# ---------- КВАДРАТ ----------
 class AdaptiveSquare(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -149,7 +148,6 @@ class AdaptiveSquare(Widget):
             'd': False, 'right': False
         }
 
-        # Подключаем физическую клавиатуру (если есть)
         self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
         self._keyboard.bind(on_key_down=self._on_key_down)
         self._keyboard.bind(on_key_up=self._on_key_up)
@@ -203,21 +201,18 @@ class AdaptiveSquare(Widget):
         self.move_to(x, y)
 
 
-# ---------- ИГРОВОЙ ВИДЖЕТ (с виртуальными кнопками) ----------
+# ---------- ИГРОВОЙ ВИДЖЕТ ----------
 class GameWidget(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.square = AdaptiveSquare()
         self.add_widget(self.square)
 
-        # Джойстик
         self.joystick = Joystick()
         self.add_widget(self.joystick)
 
-        # ----- Виртуальные кнопки для WASD и стрелок -----
-        self.keys = self.square.keys  # ссылка на словарь состояний
+        self.keys = self.square.keys
 
-        # Группа WASD (расположена над джойстиком, слева)
         wasd_positions = {
             'w': (35, 220),
             'a': (10, 195),
@@ -231,7 +226,6 @@ class GameWidget(Widget):
             self.add_widget(btn)
             self.wasd_buttons.append(btn)
 
-        # Группа стрелок (справа внизу)
         arrow_positions = {
             'up': (Window.width - 130, 70),
             'left': (Window.width - 155, 45),
@@ -246,13 +240,9 @@ class GameWidget(Widget):
             self.add_widget(btn)
             self.arrow_buttons.append(btn)
 
-        # Подсказки (временно убраны, чтобы не мешать)
-
-        # Привязка изменения размера окна
         Window.bind(on_resize=self.on_window_resize)
 
     def on_window_resize(self, window, width, height):
-        # Обновляем позиции стрелок при изменении размера окна
         arrow_positions = {
             'up': (width - 130, 70),
             'left': (width - 155, 45),
@@ -279,7 +269,6 @@ class GameApp(App):
         dx = 0.0
         dy = 0.0
 
-        # WASD
         if keys.get('a', False):
             dx -= 1
         if keys.get('d', False):
@@ -289,7 +278,6 @@ class GameApp(App):
         if keys.get('s', False):
             dy -= 1
 
-        # Стрелки
         if keys.get('left', False):
             dx -= 1
         if keys.get('right', False):
@@ -299,7 +287,6 @@ class GameApp(App):
         if keys.get('down', False):
             dy -= 1
 
-        # Добавляем джойстик
         dx += joystick_dx
         dy += joystick_dy
 
