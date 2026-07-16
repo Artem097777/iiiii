@@ -214,7 +214,7 @@ fullscreen = 0
 # (bool) Enable AndroidX support. Enable when 'android.gradle_dependencies'
 # contains an 'androidx' package, or any package from Kotlin source.
 # android.enable_androidx requires android.api >= 28
-#android.enable_androidx = True
+# android.enable_androidx = True
 
 # (list) add java compile options
 # this can for example be necessary when importing certain java libraries using the 'android.gradle_dependencies' option
@@ -300,9 +300,17 @@ android.archs = arm64-v8a, armeabi-v7a
 # (bool) enables Android auto backup feature (Android API >=23)
 android.allow_backup = True
 
-# ---------- ДОБАВЛЕННАЯ СТРОКА: отключает программную клавиатуру ----------
+# ========== НАСТРОЙКИ ДЛЯ ОТКЛЮЧЕНИЯ КЛАВИАТУРЫ ==========
+# 1. Скрываем клавиатуру при запуске
 android.manifest.soft_input_mode = stateHidden
-# -----------------------------------------------------------------------
+
+# 2. Запрещаем изменение состояния клавиатуры (дополнительная защита)
+android.manifest.window_soft_input_mode = stateHidden|adjustPan
+
+# 3. Отключаем возможность показа клавиатуры через манифест
+# (это запрещает любые попытки показать клавиатуру)
+android.manifest.uses_feature = android.hardware.keyboard,false
+# ===========================================================
 
 # (str) XML file for custom backup rules (see official auto backup documentation)
 # android.backup_rules =
